@@ -1,0 +1,113 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:YogiBearAvalonia.ViewModel"
+        x:DataType="vm:GameViewModel"
+        x:Class="YogiBearAvalonia.View.MainWindow"
+        Title="Yogi Bear Game - by Hevesi Georgina"
+        Height="600" Width="600"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Focusable="True"
+        Icon="avares://YogiBearAvalonia/Assets/bear.png">
+
+    <!-- Key bindingok -->
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Up" Command="{Binding MoveYogiCommand}" CommandParameter="up"/>
+        <KeyBinding Gesture="Down" Command="{Binding MoveYogiCommand}" CommandParameter="down"/>
+        <KeyBinding Gesture="Left" Command="{Binding MoveYogiCommand}" CommandParameter="left"/>
+        <KeyBinding Gesture="Right" Command="{Binding MoveYogiCommand}" CommandParameter="right"/>
+    </Window.KeyBindings>
+
+    <Window.Styles>
+        <Style Selector="Button.menuButton">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <Style Selector="TextBlock.statusLabel">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Styles>
+
+    <!-- Main containert csinaltam, hogy lehetssen egy sotetszurke alaphatterunk a kep alatt -->
+    <Panel Background="#2D2D30">
+        <!-- Hatter felso kepretege -->
+        <Image Source="{Binding WelcomeBackground}" 
+               Stretch="Uniform"
+               IsVisible="{Binding IsInWelcomeMode}"/>
+        
+        <!-- Tartalom egy gridben -->
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Menu Bar -->
+            <Menu Grid.Row="0" Background="#2D2D70">
+                <MenuItem Header="Game">
+                    <MenuItem Header="New Game" Command="{Binding LoadGameCommand}"/>
+                    <MenuItem Header="{Binding PauseMenuText}" Command="{Binding PauseGameCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="{Binding PauseIcon}" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Rules" Command="{Binding ShowRulesCommand}"/>
+            </Menu>
+
+            <!-- Fo tartalom -->
+            <Grid Grid.Row="1">
+                <!-- Udvozlo uzenet -->
+                <Border BorderBrush="DarkRed" 
+                        BorderThickness="2"
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Bottom"
+                        Padding="20"
+                        Background="Beige"
+                        IsVisible="{Binding IsInWelcomeMode}">
+                    <TextBlock Text="Welcome to the game!&#10;Open the 'Game' tab to start a new game!" 
+                              FontSize="16" 
+                              FontWeight="Bold" 
+                              Foreground="DarkRed"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              TextAlignment="Center"/>
+                </Border>
+
+                <!-- Jatektabla-->
+                <ItemsControl ItemsSource="{Binding GameBoardCells}"
+                             IsVisible="{Binding IsGameBoardVisible}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="{Binding GameSize}" 
+                                        Columns="{Binding GameSize}"
+                                        Background="LightGreen"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Black" BorderThickness="1" Margin="1">
+                                <Image Source="{Binding ImageSource}" 
+                                       Stretch="Uniform"
+                                       Width="30"
+                                       Height="30"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+            <!-- Status Bar -->
+            <Panel Grid.Row="2" Background="White" IsVisible="{Binding IsStatusBarVisible}">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Text="{Binding GameTime, StringFormat='Time: {0}'}" 
+                              Classes="statusLabel" Margin="0,0,10,0"/>
+                    <Separator/>
+                    <TextBlock Text="{Binding BasketsCollected, StringFormat='Baskets: {0}'}" 
+                              Classes="statusLabel" Margin="10,0,0,0"/>
+                </StackPanel>
+            </Panel>
+        </Grid>
+    </Panel>
+</Window>
